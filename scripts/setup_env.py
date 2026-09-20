@@ -37,6 +37,10 @@ def main():
     ap.add_argument('--name', default=None, help='이름 (보고서 표지에 들어감)')
     ap.add_argument('--id', dest='sid', default=None, help='학번')
     ap.add_argument('--course', default=None, help='과목명')
+    ap.add_argument('--assignment', type=int, default=None, help='과제 번호 (기본 1)')
+    ap.add_argument('--assignment-title', default=None, help='과제 제목')
+    ap.add_argument('--no-prefix', action='store_true',
+                    help='산출물 이름에 과제 번호를 붙이지 않음')
     ap.add_argument('--repo', default=None, help='노트북이 있는 GitHub 저장소 URL')
     ap.add_argument('--notebook-path', default=None, help='저장소 안의 노트북 폴더 (기본 notebooks)')
     ap.add_argument('--skip-install', action='store_true')
@@ -50,6 +54,14 @@ def main():
                      ('notebook_path', a.notebook_path)):
         if val:
             cfg[key] = val
+    asg = dict(kit.DEFAULTS['assignment'], **cfg.get('assignment', {}))
+    if a.assignment is not None:
+        asg['number'] = a.assignment
+    if a.assignment_title:
+        asg['title'] = a.assignment_title
+    if a.no_prefix:
+        asg['prefix'] = False
+    cfg['assignment'] = asg
     cfg.setdefault('dirs', kit.DEFAULTS['dirs'])
     cfg.setdefault('docx', kit.DEFAULTS['docx'])
     f.write_text(json.dumps(cfg, ensure_ascii=False, indent=2), encoding='utf-8')

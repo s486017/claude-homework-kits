@@ -15,6 +15,11 @@ DEFAULTS = {
     'student_name': '',
     'student_id': '',
     'course': '',
+    'assignment': {
+        'number': 1,        # 과제 번호 — 산출물 이름 앞에 '과제1_' 로 붙는다
+        'title': '',        # 과제 제목 (보고서 표지에 들어감)
+        'prefix': True,     # False 면 번호를 파일 이름에 붙이지 않는다
+    },
     'notebook_repo': '',
     'notebook_path': 'notebooks',
     'dirs': {
@@ -56,6 +61,22 @@ def load(start=None):
     cfg['_workspace'] = ws
     cfg['_config_exists'] = f.exists()
     return cfg
+
+
+def prefix(cfg):
+    """산출물 이름 앞에 붙일 과제 번호 — 예: '과제1_'. 끄면 빈 문자열."""
+    a = cfg.get('assignment') or {}
+    if not a.get('prefix', True) or not a.get('number'):
+        return ''
+    return '과제%s_' % a['number']
+
+
+def label(cfg):
+    """보고서 표지에 쓸 과제 이름 — 예: '과제 1 — 시계열 모델 실습'."""
+    a = cfg.get('assignment') or {}
+    if not a.get('number'):
+        return a.get('title', '')
+    return '과제 %s%s' % (a['number'], (' — ' + a['title']) if a.get('title') else '')
 
 
 def path_for(cfg, key):
