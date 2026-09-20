@@ -18,6 +18,9 @@ ts_kit.config    실행결과/               보고서/            보고서_doc
 /plugin install ts-homework@homework-kits
 ```
 
+첫 줄은 키트 **목록을 등록**하는 것이고, 둘째 줄이 이 키트 하나만 설치합니다.
+저장소에 다른 키트가 있어도 설치되지 않습니다.
+
 ### Claude 데스크톱 앱 / 웹을 쓰는 경우
 
 `plugins/ts-homework/skills/ts-homework/` 폴더를 zip 으로 압축해 **설정 → Capabilities → Skills** 에 올립니다.
