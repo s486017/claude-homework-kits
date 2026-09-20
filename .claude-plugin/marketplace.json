@@ -1,17 +1,17 @@
 {
-  "name": "ts-homework-kit",
+  "name": "homework-kits",
   "owner": {
     "name": "서승원"
   },
   "metadata": {
-    "description": "주피터 노트북 과제 자동화 키트",
-    "version": "0.1.0"
+    "description": "대학원 과제를 자동화하는 Claude Code 플러그인 모음",
+    "version": "0.2.0"
   },
   "plugins": [
     {
       "name": "ts-homework",
-      "source": "./",
-      "description": "노트북 실행부터 Word 보고서 생성까지 한 번에 처리하는 과제 키트"
+      "source": "./plugins/ts-homework",
+      "description": "주피터 노트북 과제 — 환경 세팅부터 노트북 실행, 보고서 작성, Word 변환·검증까지"
     }
   ]
 }
