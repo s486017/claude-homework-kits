@@ -1,0 +1,21 @@
+# 작업 산출물 — 각자 PC에서 만들어지는 것들
+ts_kit.config.json
+fixes.py
+노트북/
+실행결과/
+보고서/
+보고서_docx/
+_test_workspace/
+
+# 파이썬
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# 저작권 자료 — 강의안 등은 절대 올리지 않는다
+*.pdf
+
+# OS
+.DS_Store
+Thumbs.db

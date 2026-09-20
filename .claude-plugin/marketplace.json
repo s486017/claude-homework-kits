@@ -1,0 +1,17 @@
+{
+  "name": "ts-homework-kit",
+  "owner": {
+    "name": "서승원"
+  },
+  "metadata": {
+    "description": "주피터 노트북 과제 자동화 키트",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "ts-homework",
+      "source": "./",
+      "description": "노트북 실행부터 Word 보고서 생성까지 한 번에 처리하는 과제 키트"
+    }
+  ]
+}

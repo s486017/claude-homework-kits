@@ -1,0 +1,9 @@
+{
+  "name": "ts-homework",
+  "description": "주피터 노트북 과제를 한 번에 처리하는 도구 모음 — 환경 세팅 → 노트북 내려받기·실행 → 결과(출력·그림) 저장 → 보고서 작성 → Word(.docx) 변환·검증까지.",
+  "version": "0.1.0",
+  "author": {
+    "name": "서승원"
+  },
+  "keywords": ["jupyter", "notebook", "homework", "docx", "report", "timeseries"]
+}
