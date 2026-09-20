@@ -1,10 +1,20 @@
 # -*- coding: utf-8 -*-
-"""2단계 — GitHub 저장소의 .ipynb 를 내려받아 셀 단위 텍스트(.ipynb.txt)로 저장한다.
+"""2단계 — 노트북(.ipynb)을 가져와 셀 단위 텍스트(.ipynb.txt)로 저장한다.
 
 .ipynb 원본(JSON)은 사람이 읽기도, Claude 가 읽기도 나쁘다. 셀 경계를 살린
 텍스트로 바꿔 두면 몇 번 셀에서 무슨 일이 났는지 그대로 지목할 수 있다.
 
-사용: python fetch_notebooks.py [--repo URL] [--path notebooks] [--only 이름 ...]
+가져오는 방법 세 가지 — **GitHub 계정이 없어도 된다.**
+
+  1. GitHub 저장소 전체 (강의 노트북이 공개 저장소에 있을 때)
+     python fetch_notebooks.py --repo https://github.com/<계정>/<저장소>
+
+  2. 내 PC 의 파일·폴더 (메일·LMS 로 .ipynb 를 직접 받았을 때)
+     python fetch_notebooks.py --from ~/Downloads/과제노트북
+     python fetch_notebooks.py --from a.ipynb b.ipynb
+
+  3. 노트북 하나의 주소 (Colab·GitHub 링크를 그대로 붙여넣기)
+     python fetch_notebooks.py --url https://colab.research.google.com/github/.../x.ipynb
 """
 import argparse
 import json
@@ -44,16 +54,75 @@ def to_text(nb_json, source_url, raw_url):
     return '\n'.join(out)
 
 
+def save(dest, name, txt):
+    f = dest / (name + '.ipynb.txt')
+    f.write_text(txt, encoding='utf-8')
+    print('  %-42s 셀 %3d  → %s' % (name, txt.count('##### [Cell '), f.name))
+
+
+def from_local(paths, dest, only):
+    """내 PC 의 .ipynb 파일이나 폴더에서 가져온다 — 네트워크도 계정도 필요 없다."""
+    files = []
+    for p in paths:
+        p = Path(p).expanduser()
+        if p.is_dir():
+            files += sorted(p.rglob('*.ipynb'))
+        elif p.suffix == '.ipynb':
+            files.append(p)
+        else:
+            print('  [건너뜀] .ipynb 가 아닙니다: %s' % p)
+    files = [f for f in files if '.ipynb_checkpoints' not in str(f)]
+    if only:
+        files = [f for f in files if any(k in f.name for k in only)]
+    if not files:
+        raise SystemExit('가져올 .ipynb 를 찾지 못했습니다: %s' % ', '.join(str(p) for p in paths))
+    print('내 PC 에서 노트북 %d개' % len(files))
+    for f in files:
+        save(dest, f.stem, to_text(f.read_bytes(), str(f), ''))
+    return len(files)
+
+
+def from_url(url, dest):
+    """Colab / GitHub 링크 하나를 그대로 받는다."""
+    raw = url
+    m = re.search(r'colab\.research\.google\.com/github/(.+)$', url)
+    if m:
+        raw = 'https://raw.githubusercontent.com/' + m.group(1).replace('/blob/', '/')
+    elif 'github.com' in url and '/blob/' in url:
+        raw = url.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/')
+    name = raw.rstrip('/').split('/')[-1].replace('.ipynb', '') or 'notebook'
+    print('주소에서 노트북 1개')
+    save(dest, name, to_text(get(raw), url, raw))
+    return 1
+
+
 def main():
     cfg = kit.load()
     ap = argparse.ArgumentParser()
-    ap.add_argument('--repo', default=cfg['notebook_repo'])
-    ap.add_argument('--path', default=cfg['notebook_path'])
+    ap.add_argument('--repo', default=cfg['notebook_repo'], help='GitHub 저장소 주소')
+    ap.add_argument('--path', default=cfg['notebook_path'], help='저장소 안의 노트북 폴더')
+    ap.add_argument('--from', dest='local', nargs='*', default=None,
+                    help='내 PC 의 .ipynb 파일 또는 폴더')
+    ap.add_argument('--url', default=None, help='노트북 하나의 주소 (Colab/GitHub 링크)')
     ap.add_argument('--only', nargs='*', default=None, help='특정 노트북만 (이름 일부)')
     a = ap.parse_args()
+
+    dest = kit.path_for(cfg, 'notebooks')
+    if a.local:
+        n = from_local(a.local, dest, a.only)
+        print('\n저장 위치: %s\n다음 단계: python run_notebooks.py' % dest)
+        return
+    if a.url:
+        from_url(a.url, dest)
+        print('\n저장 위치: %s\n다음 단계: python run_notebooks.py' % dest)
+        return
     if not a.repo:
-        raise SystemExit('노트북 저장소가 설정되지 않았습니다.\n'
-                         '  python setup_env.py --repo https://github.com/<계정>/<저장소>')
+        raise SystemExit(
+            '노트북을 어디서 가져올지 정하지 않았습니다. 셋 중 하나를 쓰세요.\n'
+            '  1) 공개 저장소에 있는 경우 : fetch_notebooks.py --repo https://github.com/<계정>/<저장소>\n'
+            '  2) 파일로 받은 경우       : fetch_notebooks.py --from <폴더 또는 .ipynb 경로>\n'
+            '  3) Colab 링크만 있는 경우  : fetch_notebooks.py --url <노트북 주소>\n'
+            '※ 본인 GitHub 계정이나 저장소는 필요 없습니다. 노트북을 "가져올 곳"을 알려 주는 것뿐입니다.')
 
     owner, repo, ref, sub = parse_repo(a.repo)
     path = sub or a.path
@@ -69,14 +138,9 @@ def main():
 
     print('저장소 %s/%s (%s) — 노트북 %d개' % (owner, repo, ref, len(nbs)))
     for i in nbs:
-        name = i['name'][:-6]
         raw = i['download_url']
         page = 'https://github.com/%s/%s/blob/%s/%s/%s' % (owner, repo, ref, path, i['name'])
-        txt = to_text(get(raw), page, raw)
-        f = dest / (name + '.ipynb.txt')
-        f.write_text(txt, encoding='utf-8')
-        cells = txt.count('##### [Cell ')
-        print('  %-42s 셀 %3d  → %s' % (name, cells, f.name))
+        save(dest, i['name'][:-6], to_text(get(raw), page, raw))
     print()
     print('저장 위치: %s' % dest)
     print('다음 단계: python run_notebooks.py')

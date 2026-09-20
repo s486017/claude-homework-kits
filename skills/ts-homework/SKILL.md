@@ -37,10 +37,19 @@ python "${CLAUDE_PLUGIN_ROOT}/scripts/setup_env.py" --name "홍길동" --id "202
 작업 폴더·설정 파일·`fixes.py` 를 만들고, 빠진 패키지를 설치하고, 한글 폰트를 확인한다.
 폰트가 없다고 나오면 그래프의 한글이 깨지므로 사용자에게 알린다(맥 AppleGothic, 리눅스 NanumGothic).
 
-## ② 노트북 내려받기와 실행
+## ② 노트북 가져오기와 실행
+
+노트북을 어떻게 받았는지 먼저 확인한다. **본인 GitHub 계정이나 저장소는 필요 없다** —
+아래는 노트북을 "가져올 곳"을 알려 주는 것뿐이다.
 
 ```bash
-python "${CLAUDE_PLUGIN_ROOT}/scripts/fetch_notebooks.py"
+# 1) 강의 노트북이 공개 저장소에 있을 때
+python "${CLAUDE_PLUGIN_ROOT}/scripts/fetch_notebooks.py" --repo https://github.com/<계정>/<저장소>
+# 2) 메일·LMS 로 .ipynb 파일을 직접 받았을 때 (네트워크도 계정도 불필요)
+python "${CLAUDE_PLUGIN_ROOT}/scripts/fetch_notebooks.py" --from <폴더 또는 .ipynb 경로>
+# 3) Colab 링크만 있을 때
+python "${CLAUDE_PLUGIN_ROOT}/scripts/fetch_notebooks.py" --url <노트북 주소>
+
 python "${CLAUDE_PLUGIN_ROOT}/scripts/run_notebooks.py"
 ```
 
