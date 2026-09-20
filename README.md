@@ -14,7 +14,7 @@ ts_kit.config    실행결과/               보고서/            보고서_doc
 ### Claude Code 를 쓰는 경우
 
 ```
-/plugin marketplace add <깃허브계정>/timeseries-homework-kit
+/plugin marketplace add s486017/timeseries-homework-kit
 /plugin install ts-homework
 ```
 
