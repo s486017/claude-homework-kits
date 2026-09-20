@@ -14,7 +14,7 @@ Claude Code 에서 한 번만 등록하면, 이 저장소의 키트를 전부 �
 그다음 필요한 키트를 설치합니다.
 
 ```
-/plugin install ts-homework@homework-kits
+/plugin install ts-homework@s486017-homework-kits
 ```
 
 ## 들어 있는 키트
@@ -32,7 +32,7 @@ Claude Code 에서 한 번만 등록하면, 이 저장소의 키트를 전부 �
 | 명령 | 하는 일 |
 |---|---|
 | `/plugin marketplace add ...` | **목록만 등록합니다.** 설치가 아닙니다 — 어떤 키트가 있는지 알려 주는 것뿐입니다 |
-| `/plugin install <키트>@homework-kits` | **고른 키트 하나만** 설치하고 켭니다 |
+| `/plugin install <키트>@s486017-homework-kits` | **고른 키트 하나만** 설치하고 켭니다 |
 
 노트북 과제 키트만 필요하면 `ts-homework` 하나만 설치하면 됩니다. 나중에 이 저장소에 키트가
 더 추가돼도 **자동으로 따라오지 않습니다.** 필요해지면 그때 골라서 설치하면 됩니다.

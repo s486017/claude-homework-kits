@@ -15,7 +15,7 @@ ts_kit.config    실행결과/               보고서/            보고서_doc
 
 ```
 /plugin marketplace add s486017/claude-homework-kits
-/plugin install ts-homework@homework-kits
+/plugin install ts-homework@s486017-homework-kits
 ```
 
 첫 줄은 키트 **목록을 등록**하는 것이고, 둘째 줄이 이 키트 하나만 설치합니다.

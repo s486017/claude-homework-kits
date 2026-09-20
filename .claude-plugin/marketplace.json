@@ -1,7 +1,9 @@
 {
-  "name": "homework-kits",
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "s486017-homework-kits",
   "owner": {
-    "name": "서승원"
+    "name": "서승원",
+    "url": "https://github.com/s486017"
   },
   "metadata": {
     "description": "대학원 과제를 자동화하는 Claude Code 플러그인 모음",
